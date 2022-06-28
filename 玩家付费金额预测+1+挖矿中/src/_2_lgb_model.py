@@ -26,21 +26,36 @@ def read_data():
     return data
 
 def add_SumZeros(data, features):
-    flist = [x for x in data.columns if not x in ['user_id','prediction_pay_price']]
+    flist = [
+        x for x in data.columns if x not in ['user_id', 'prediction_pay_price']
+    ]
+
     if 'SumZeros' in features:
         data.insert(1, 'SumZeros', (data[flist] == 0).astype(int).sum(axis=1))
-    flist = [x for x in data.columns if not x in ['user_id','prediction_pay_price']]
+    flist = [
+        x for x in data.columns if x not in ['user_id', 'prediction_pay_price']
+    ]
+
     return data
 
 def add_sumValues(data, features):
-    flist = [x for x in data.columns if not x in ['user_id','prediction_pay_price']]
+    flist = [
+        x for x in data.columns if x not in ['user_id', 'prediction_pay_price']
+    ]
+
     if 'SumValues' in features:
         data.insert(1, 'SumValues', (data[flist] != 0).astype(int).sum(axis=1))
-    flist = [x for x in data.columns if not x in ['user_id','prediction_pay_price']]
+    flist = [
+        x for x in data.columns if x not in ['user_id', 'prediction_pay_price']
+    ]
+
     return data
 
 def km(data):
-    flist = [x for x in data.columns if not x in ['user_id','prediction_pay_price']]
+    flist = [
+        x for x in data.columns if x not in ['user_id', 'prediction_pay_price']
+    ]
+
     scaler = StandardScaler()
     km_data = scaler.fit_transform(data[flist].values)
 
@@ -48,20 +63,23 @@ def km(data):
     for ncl in range(5,15):
         clf = KMeans(n_clusters=ncl)
         clf.fit_predict(normalize(km_data, axis=0))
-        data['kmeans_cluster_'+str(ncl)] = clf.predict(normalize(km_data, axis=0))
-        flist_kmeans.append('kmeans_cluster_'+str(ncl))
+        data[f'kmeans_cluster_{str(ncl)}'] = clf.predict(normalize(km_data, axis=0))
+        flist_kmeans.append(f'kmeans_cluster_{str(ncl)}')
     print(flist_kmeans)
     return data
 
 def pca_pro(data):
-    flist = [x for x in data.columns if not x in ['user_id','prediction_pay_price']]
+    flist = [
+        x for x in data.columns if x not in ['user_id', 'prediction_pay_price']
+    ]
+
     n_components = 40
     flist_pca = []
     pca = PCA(n_components=n_components)
     x_train_projected = pca.fit_transform(normalize(data[flist], axis=0))
-    for npca in range(0, n_components):
-        data.insert(1, 'PCA_'+str(npca+1), x_train_projected[:, npca])
-        flist_pca.append('PCA_'+str(npca+1))
+    for npca in range(n_components):
+        data.insert(1, f'PCA_{str(npca+1)}', x_train_projected[:, npca])
+        flist_pca.append(f'PCA_{str(npca+1)}')
     print(flist_pca)
     return data
 
